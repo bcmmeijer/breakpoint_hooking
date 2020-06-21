@@ -2,16 +2,25 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <functional>
 
 #include "bp_hook.h"
+
+typedef std::shared_ptr<void> _defer;
+typedef std::map<std::string, std::shared_ptr<bp_hook>> hooks;
+
+#define defer(x) _defer _(nullptr, std::bind([&] { x; }));
+
+#define hook_entry(x)							\
+		auto self = hook_manager::get()[x];		\
+		self->unhook();							\
+		defer(self->rehook());
 
 #ifdef _WIN64
 #define Ip Rip
 #else
 #define Ip Eip
 #endif
-
-using hooks = std::map<std::string, std::shared_ptr<bp_hook>>;
 
 class hook_manager {
 public:

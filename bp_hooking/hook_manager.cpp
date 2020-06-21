@@ -52,7 +52,7 @@ bp_hook* hook_manager::get_hook(PEXCEPTION_POINTERS info) {
 
 		if (!hook->hooked()) continue;
 
-		if (info->ContextRecord->Ip == (uintptr_t)hook->original<void*>())
+		if (info->ContextRecord->Ip == hook->original<uintptr_t>())
 			return hook.get();
 	}
 	return nullptr;
